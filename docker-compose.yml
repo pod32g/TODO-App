@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  backend:
+    build: ./TODO-Backend
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    volumes:
+      - ./TODO-Backend:/app
+  
+  frontend:
+    build: ./TODO-Frontend
+    command: sh -c "yarn start"
+    ports:
+      - 3000:3000
+    volumes: 
+      - ./TODO-Frontend:/app
+    depends_on: 
+      - backend
