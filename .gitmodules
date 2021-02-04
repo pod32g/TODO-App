@@ -1,0 +1,6 @@
+[submodule "TODO-Backend"]
+	path = TODO-Backend
+	url = https://github.com/pod32g/TODO-Backend.git
+[submodule "TODO-Frontend"]
+	path = TODO-Frontend
+	url = https://github.com/pod32g/TODO-Frontend.git
