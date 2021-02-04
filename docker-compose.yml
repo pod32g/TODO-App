@@ -3,7 +3,7 @@ version: '3'
 services:
   backend:
     build: ./TODO-Backend
-    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
     volumes:
@@ -11,6 +11,9 @@ services:
   
   frontend:
     build: ./TODO-Frontend
+    environment: 
+      - REACT_APP_BACKEND_URL=http://localhost
+      - CHOKIDAR_USEPOLLING=true
     command: sh -c "yarn start"
     ports:
       - 3000:3000
