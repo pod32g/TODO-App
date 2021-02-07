@@ -1,23 +1,81 @@
 version: '3'
 
 services:
-  backend:
-    build: ./TODO-Backend
-    command: sh -c "pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-    ports:
-      - 8000:8000
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - todo_network
     volumes:
-      - ./TODO-Backend:/app
+      - ./postgres-data:/var/lib/postgresql/data
+
+ 
   
   frontend:
     build: ./TODO-Frontend
     environment: 
-      - REACT_APP_BACKEND_URL=http://localhost
-      - CHOKIDAR_USEPOLLING=true
+      REACT_APP_BACKEND_URL: http://localhost:8000
     command: sh -c "yarn start"
     ports:
       - 3000:3000
-    volumes: 
-      - ./TODO-Frontend:/app
     depends_on: 
       - backend
+    networks:
+      - todo_network
+      
+  cypress-e2e-tests:
+    build:
+      context: TODO-E2E
+      dockerfile: Dockerfile
+    container_name: cypress-e2e-tests
+    depends_on:
+      - frontend
+    environment:
+      - CYPRESS_baseUrl=http://frontend:3000
+    entrypoint: ""
+    command:
+      [
+        "dockerize",
+        "-wait",
+        "http://frontend:3000",
+        "-timeout",
+        "300s",
+        "bash",
+        "-c",
+        "yarn run test",
+      ]
+    volumes:
+      - ./cypresse2e/mochawesome-report/:/app/mochawesome-report/
+      - ./cypresse2e/cypress:/app/cypress
+      - ./cypresse2e/cypress.json:/app/cypress.json
+    working_dir: /app
+    networks:
+      - todo_network
+    
+  backend:
+    build: ./TODO-Backend
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py test && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+    ports:
+      - 8000:8000
+    volumes:
+      - ./TODO-Backend:/app
+    networks:
+      - todo_network
+    depends_on: 
+      - db
+  
+
+
+networks:
+  todo_network:
+    driver: bridge

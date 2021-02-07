@@ -4,3 +4,6 @@
 [submodule "TODO-Frontend"]
 	path = TODO-Frontend
 	url = https://github.com/pod32g/TODO-Frontend.git
+[submodule "TODO-E2E"]
+	path = TODO-E2E
+	url = https://github.com/pod32g/TODO-E2E.git
