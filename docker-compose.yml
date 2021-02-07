@@ -49,9 +49,9 @@ services:
         "yarn run test",
       ]
     volumes:
-      - ./cypresse2e/mochawesome-report/:/app/mochawesome-report/
-      - ./cypresse2e/cypress:/app/cypress
-      - ./cypresse2e/cypress.json:/app/cypress.json
+      - ./TODO-E2E/mochawesome-report/:/app/mochawesome-report/
+      - ./TODO-E2E/cypress:/app/cypress
+      - ./TODO-E2E/cypress.json:/app/cypress.json
     working_dir: /app
     networks:
       - todo_network
